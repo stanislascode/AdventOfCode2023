@@ -9,9 +9,6 @@ def parser_texte(file):
         print("Game ",nb_game+1,": ",end = " ")
         for i in range(nb_manches+1):
             tableau.append([0,0,0])
-        posgreen = 0
-        posblue = 0
-        posred = 0
         possep = 0
         newpossep = 0
         for i in range(nb_manches+1):
