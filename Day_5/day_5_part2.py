@@ -44,7 +44,9 @@ def searchvalue(dico, seed_liste):
             tableau_final.append(new_converted_seed_table)
             previous_converted_seed_table = new_converted_seed_table
         tableau_final_seed.append(tableau_final)
+        print(tableau_final)
     return tableau_final_seed
+
 #text = open("input.txt").readlines()
 text = open("input.txt").readlines()
 
@@ -53,6 +55,7 @@ def convert_one_seed(seed, dico):
     converted_seed = []
     decompo_isnt_finished = True
     while decompo_isnt_finished:
+        dico_change_rien = 0
         for j in range(len(dico)):
             if decompo_isnt_finished:
                 if seed[0] in range(dico[j][1], dico[j][1]+dico[j][2]):
@@ -62,25 +65,25 @@ def convert_one_seed(seed, dico):
                     else:
                         converted_seed.append([dico[j][0] + seed[0] -dico[j][1], dico[j][0]+dico[j][2]])
                         seed[0] = dico[j][1]+dico[j][2]
-                elif dico[j][1] in range(seed[0], seed[1]):
-                    if dico[j][1]+dico[j][2] in range(seed[0], seed[1]):
+                elif dico[j][1] in range(seed[0], seed[1]+1):
+                    if dico[j][1]+dico[j][2]-1 in range(seed[0], seed[1]):
                         pass
                     else:
-                        converted_seed.append([dico[j][0] , dico[j][0]+seed[1] -dico[j][1]])
-                        seed[1] = dico[j][1]
+                        converted_seed.append([dico[j][0] , seed[1] + dico[j][0] -dico[j][1]])
+                        seed[1] = dico[j][1]-1
                 else:
-                    converted_seed.append([seed[0], seed[1]])
-                    decompo_isnt_finished = False
+                    dico_change_rien+=1
+                    if(dico_change_rien == len(dico)):
+                        converted_seed.append([seed[0] , seed[1]])
+                        decompo_isnt_finished = False
     return converted_seed
 
 
 def tri_table(table):
-    min = 1000000000
-    for i in range(len(table)):
-        for j in range(len(table[i])):
-            for k in range(len(table[i][j])):
-                if table[i][j][k][0] < min:
-                    min = table[i][j][k][0]
+    min = table[0][0]
+    for i in table:
+        if i[0] < min:
+            min = i[0]
 
     return min
 
@@ -88,5 +91,25 @@ def tri_table(table):
 seed = liste_seed_range(text)
 dico1 = dico(text)
 
-table = searchvalue(dico1,seed)
+def analyse(seed, dico):
+    converted_seed = [seed]
+    for i in range(7):
+        new_converted_seed = []
+        for j in converted_seed:
+            new_converted_seed += convert_one_seed(j,dico[i])
+        converted_seed = new_converted_seed
+    return converted_seed
+
+def analyse_finale(seed_liste,dico):
+    min = 10000000000
+    for seed in seed_liste:
+        if tri_table(analyse(seed,dico))<min:
+            min = tri_table(analyse(seed,dico))
+    return min
+
+
+table = analyse(seed[0],dico1)
+print(analyse(seed[0],dico1))
 print(tri_table(table))
+print(analyse_finale(seed, dico1))
+
