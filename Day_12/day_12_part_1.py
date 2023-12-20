@@ -1,7 +1,3 @@
-
-
-
-
 def parser(text):
     data = []
     for row in text:
@@ -15,39 +11,41 @@ def print_tab(data):
             print(data[i][j], end = "")
         print("")
 
-def travail(data,tab_pos,bol):
+def nb_pos(data,tab_pos, bool):
+    row = list(data[0])
+    indice = list(data[1])
     s = 0
-    for row in data:
-        initial_row = list(row[0])
-        nb_try = row[0].count("?")
-        tab_possibilitie = tab_pos[row[0].count("?")-1]
-        tab_position = []
-        for index, elem in enumerate(row[0]):
-            if elem == '?':
-                tab_position.append(index)
-        for possibiliti in tab_possibilitie:
-            cpt = 0
-            for pos in tab_position:
-                row[0][pos] = possibiliti[cpt]
-                cpt+=1
-            if row[0].count('#') == sum(row[1]):
-                tab = []
-                av = 0
-                for i in range(len(row[0])):
-                    cpt = 0
-                    if av != 0:
-                        av-=1
-                    else:
-                        while i+av < len(row[0]) and (row[0][i+av] == '#'):
-                            cpt+=1
-                            av+=1
-                        if cpt != 0:
-                            tab.append(cpt)
-                if tab == row[1]:
-                    if bol < 2:
-                        s+= travail([[row[0]+['?']+initial_row, row[1]+list(row[1])]],tab_pos,bol+1)
-                    else:
-                        s+=1
+    nb_try = row.count("?")
+    tab_possibilitie = tab_pos[row.count("?")-1]
+    tab_position = []
+    for index, elem in enumerate(row):
+        if elem == '?':
+            tab_position.append(index)
+    for possibiliti in tab_possibilitie:
+        cpt = 0
+        for pos in tab_position:
+            row[pos] = possibiliti[cpt]
+            cpt+=1
+        if row.count('#') == sum(indice):
+            tab = []
+            av = 0
+            for i in range(len(row)):
+                cpt = 0
+                if av != 0:
+                    av-=1
+                else:
+                    while i+av < len(row) and (row[i+av] == '#'):
+                        cpt+=1
+                        av+=1
+                    if cpt != 0:
+                        tab.append(cpt)
+            if tab == indice:
+                if bool < 2:
+                    print([row+['?']+list(data[0]),indice+indice])
+                    s+= nb_pos([row+['?']+list(data[0]),indice+indice],tab_pos,bool+1)
+                else:
+                    s+=1
+    print(s)
     return s
                     
                 
@@ -69,7 +67,7 @@ def all_possibilities(nb_try):
 
 def generate_pos():
     tab_pos = []
-    for i in range(17):
+    for i in range(19):
         tab_pos.append(all_possibilities(i))
     return tab_pos
 
@@ -77,7 +75,7 @@ tab_pos = generate_pos()
 text = open("example.txt").readlines()
 data = parser(text)
 
-# print(data)
-# print_tab(data)
 
-print(travail(data,tab_pos,1))
+for row in data:
+    # print("ici on fait le calcul de base",nb_pos(row, tab_pos, 1))
+    print("ici on fait le calcul de l'etendue",nb_pos(row, tab_pos, 1))
